@@ -11,6 +11,7 @@ import qasync
 from qasync import QEventLoop, asyncSlot
 import json
 from functools import partial
+import time
 
 
 COMMAND_CHARACTERISTIC_UUID = "b7b88cad-dff1-492c-ab98-2aab1c81da84"; # arm, launch, kill; used to send commands
@@ -21,7 +22,7 @@ blue = Blue()
 
 idv_variables = { # individual variables
     "SERVO_RANGE": {
-        "value": 0,
+        "value": 50,
         "description": "limiting threshold value the maximum servo range in degrees"
     },
     "Z2XY_WEIGHT": {
@@ -69,6 +70,10 @@ commands = {
     },
     "set": {
         "description": "set all of the external setting variables",
+        "function": None
+    },
+    "sequence": {
+        "description": "run sequence",
         "function": None
     }
 }
@@ -154,6 +159,7 @@ class CommandPanel(QFrame):
         commands["launch"]["function"] = self.launch
         commands["kill"]["function"] = self.kill
         commands["set"]["function"] = self.set
+        commands["sequence"]["function"] = self.sequence
 
         self.load()
 
@@ -192,6 +198,14 @@ class CommandPanel(QFrame):
     @asyncSlot()
     async def kill(self):
         await blue.write(COMMAND_CHARACTERISTIC_UUID, "kill")
+
+    @asyncSlot()
+    async def sequence(self):
+        for i in range(0, 65, 5):
+            idv_variables["SERVO_OFFSETS_1"]["value"] = -i
+            idv_variables["SERVO_OFFSETS_3"]["value"] = i
+            time.sleep(5)
+            await self.set()
 
     @asyncSlot()
     async def set(self):
