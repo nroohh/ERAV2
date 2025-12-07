@@ -40,16 +40,17 @@ void Control::launch() {
   rotationX.pid(hnu.pitch, hnu.dt);
   rotationY.pid(hnu.roll, hnu.dt);
   rotationZ.pid(hnu.yaw, hnu.dt);
+  angularAccel.pid(altitude.tgt, hnu.dt);
   
   // ACTION
   // edf.writeMicroseconds(1500 + altitude.output * 500); // throttle control
   edf.writeMicroseconds(1000 + altitude.tgt * 100); // throttle control
   // Serial.print(rotationX.output); Serial.print(", "); Serial.print(rotationY.output); Serial.print(", "); Serial.println(rotationZ.output);
 
-  servos[1].write(90 + SERVO_OFFSETS[1] + (((1 - Z2XY_WEIGHT) * rotationY.output) - ((Z2XY_WEIGHT) * rotationZ.output)) * SERVO_RANGE);
-  servos[0].write(90 + SERVO_OFFSETS[0] + ((-1 * (1 - Z2XY_WEIGHT) * rotationX.output) - ((Z2XY_WEIGHT) * rotationZ.output)) * SERVO_RANGE);
-  servos[3].write(90 + SERVO_OFFSETS[3] + ((-1 * (1 - Z2XY_WEIGHT) * rotationY.output) - ((Z2XY_WEIGHT) * rotationZ.output)) * SERVO_RANGE);
-  servos[2].write(90 + SERVO_OFFSETS[2] + (((1 - Z2XY_WEIGHT) * rotationX.output) - ((Z2XY_WEIGHT) * rotationZ.output)) * SERVO_RANGE);
+  servos[1].write(90 + SERVO_OFFSETS[1] + (((1 - Z2XY_WEIGHT) * rotationY.output) - ((Z2XY_WEIGHT) * (rotationZ.output + angularAccel.output))) * SERVO_RANGE);
+  servos[0].write(90 + SERVO_OFFSETS[0] + ((-1 * (1 - Z2XY_WEIGHT) * rotationX.output) - ((Z2XY_WEIGHT) * (rotationZ.output + angularAccel.output))) * SERVO_RANGE);
+  servos[3].write(90 + SERVO_OFFSETS[3] + ((-1 * (1 - Z2XY_WEIGHT) * rotationY.output) - ((Z2XY_WEIGHT) * (rotationZ.output + angularAccel.output))) * SERVO_RANGE);
+  servos[2].write(90 + SERVO_OFFSETS[2] + (((1 - Z2XY_WEIGHT) * rotationX.output) - ((Z2XY_WEIGHT) * (rotationZ.output + angularAccel.output))) * SERVO_RANGE);
 
   delay(20);
 

@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QSizePolicy,
     QSlider, QTableWidget, QHeaderView, QGridLayout, QFrame, QScrollArea
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 import sys
 from utils import *
 from blue import *
@@ -289,7 +289,6 @@ class BluetoothPanel(QFrame):
             if ok:
                 self.connected = False
                 widget.button.setText("connect")
-
 class ControlPanel(QFrame):
     def __init__(self):
         super().__init__()
@@ -297,10 +296,21 @@ class ControlPanel(QFrame):
         self.setFrameShadow(QFrame.Raised)
         self.setObjectName("panel")
 
-        parameters["RX_TGT"]["func"] = self.onSliderUpdateRX
-        parameters["RY_TGT"]["func"] = self.onSliderUpdateRY
-        parameters["RZ_TGT"]["func"] = self.onSliderUpdateRZ
-        parameters["AL_TGT"]["func"] = self.onSliderUpdateAL
+        # --- Throttling Setup ---
+        self.send_timer = QTimer(self)
+        # Set the delay (e.g., 100 milliseconds)
+        self.send_timer.setInterval(100) 
+        # Only run once after being started/restarted
+        self.send_timer.setSingleShot(True)
+        # Connect the timer's timeout to the Bluetooth send function
+        self.send_timer.timeout.connect(self.onUpdate) 
+        # ------------------------
+
+        # Update the parameter function mappings to use the new onSliderChange
+        parameters["RX_TGT"]["func"] = self.onSliderChangeRX
+        parameters["RY_TGT"]["func"] = self.onSliderChangeRY
+        parameters["RZ_TGT"]["func"] = self.onSliderChangeRZ
+        parameters["AL_TGT"]["func"] = self.onSliderChangeAL
 
         self.load()
 
@@ -315,14 +325,23 @@ class ControlPanel(QFrame):
 
             parameter["slider"] = QSlider(Qt.Horizontal, self)
             parameter["slider"].setRange(parameter["min"], parameter["max"])
-            parameter["slider"].setValue(parameter["value"])
-            parameter["slider"].valueChanged.connect(parameter["func"])
+            # Adjust for AL_TGT scaling on initial load
+            initial_value = parameter["value"]
+            if name == "AL_TGT":
+                initial_value = int(parameter["value"] * 10)
+            parameter["slider"].setValue(initial_value)
 
-            parameter["label"] = QLabel(str(parameter["value"]))
+            # Adjust label display for AL_TGT on initial load
+            display_value = parameter["value"] if name != "AL_TGT" else parameter["value"] / 10
+            parameter["label"] = QLabel(str(display_value))
             parameter["label"].setAlignment(Qt.AlignCenter)
 
             button = QPushButton("reset")
+            # When reset is clicked, set value to 0, which triggers valueChanged, which starts the timer.
             button.clicked.connect(lambda _, s=parameter["slider"]: s.setValue(0))
+
+            # Connect valueChanged to the throttling function
+            parameter["slider"].valueChanged.connect(parameter["func"])
 
             layout.addWidget(label, 0, 0)
             layout.addWidget(parameter["slider"], 1, 0)
@@ -331,33 +350,42 @@ class ControlPanel(QFrame):
 
             main_layout.addLayout(layout)
 
-    def onSliderUpdateRX(self, value):
+    # All these functions now only update the value/label and start the timer.
+    def onSliderChangeRX(self, value):
         parameters["RX_TGT"]["value"] = value
         parameters["RX_TGT"]["label"].setText(str(value))
-        self.onUpdate()
+        self.send_timer.start() # Start or restart the timer
 
-    def onSliderUpdateRY(self, value):
+    def onSliderChangeRY(self, value):
         parameters["RY_TGT"]["value"] = value
         parameters["RY_TGT"]["label"].setText(str(value))
-        self.onUpdate()
+        self.send_timer.start() # Start or restart the timer
 
-    def onSliderUpdateRZ(self, value):
+    def onSliderChangeRZ(self, value):
         parameters["RZ_TGT"]["value"] = value
         parameters["RZ_TGT"]["label"].setText(str(value))
-        self.onUpdate()
+        self.send_timer.start() # Start or restart the timer
 
-    def onSliderUpdateAL(self, value):
-        parameters["AL_TGT"]["value"] = value / 10
-        parameters["AL_TGT"]["label"].setText(str(value / 10))
-        self.onUpdate()
+    def onSliderChangeAL(self, value):
+        # Update internal value and display label with scaling
+        scaled_value = value / 10
+        parameters["AL_TGT"]["value"] = scaled_value
+        parameters["AL_TGT"]["label"].setText(str(scaled_value))
+        self.send_timer.start() # Start or restart the timer
 
+    # This function is now only called by the QTimer's timeout signal.
     @asyncSlot()
     async def onUpdate(self):
+        # Stop the timer immediately to ensure it doesn't fire again
+        self.send_timer.stop() 
+        
         data = {}
         for name, parameter in parameters.items():
-            data[name] = parameter["value"]
+            # Use the most recent value set by the onSliderChange functions
+            data[name] = parameter["value"] 
 
         json_string = json.dumps(data)
+        # Send the Bluetooth command
         await blue.write(TARGET_CHARACTERISTIC_UUID, json_string)
 
 class Window(QWidget):
