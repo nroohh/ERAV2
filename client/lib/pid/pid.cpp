@@ -8,19 +8,40 @@ void Axis::pid(float value, float dt) {
     c = value;
     output = 0;
 
-    e = tgt - c;
-    i += e * dt;
-    d = (e - pe) / dt;
-
-    // pid values
+    e = tgt - c; 
     float pv = pg * e; 
-    float iv = ig * i;
+
+    d = (e - pe) / dt;
     float dv = dg * d;
+    
+    float po = pv + dv; // potential output without integral
+    float di = e * dt; // integral change
+    float tpo = po + ig * (i + di); // toatal potential output
+    bool is_saturating = false;
+    
+    if (tpo > 1.0) {
+        if (e > 0) {
+            is_saturating = true;
+        }
+    } else if (tpo < -1.0) {
+        if (e < 0) {
+            is_saturating = true;
+        }
+    }
+
+    if (!is_saturating) {
+        i += di;
+    }
+    
+    float iv = ig * i;
 
     output = pv + iv + dv;
-    pe = e;
 
-    if (abs(output) > 1) { // limits output [-1, 1]
-        output = output / abs(output);
+    if (output > 1.0) {
+        output = 1.0;
+    } else if (output < -1.0) {
+        output = -1.0;
     }
+
+    pe = e;
 }

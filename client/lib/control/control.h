@@ -56,6 +56,7 @@ public:
         targetMap["AL_TGT"] = &altitude.tgt;
 
         funcMap["arm"] = [this]() { this->arm(); };
+        funcMap["reset"] = [this]() { this->reset(); };
         funcMap["launch"] = [this]() { this->launch(); };
         funcMap["kill"] = [this]() { this->kill(); };
 
@@ -69,6 +70,7 @@ public:
     void arm();
     void launch();
     void kill();
+    void reset();
 };
 
 

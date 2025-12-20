@@ -30,19 +30,19 @@ idv_variables = { # individual variables
         "description": "ratio of pid for roll(z) to pitch(x) and yaw(y) control"
     },
     "SERVO_OFFSETS_0": {
-        "value": 0,
+        "value": -17.5,
         "description": "initial offset of servo 0"
     },
     "SERVO_OFFSETS_1": {
-        "value": 0,
+        "value": -12.5,
         "description": "initial offset of servo 1"
     },
     "SERVO_OFFSETS_2": {
-        "value": 0,
+        "value": -22.5,
         "description": "initial offset of servo 2"
     },
     "SERVO_OFFSETS_3": {
-        "value": 0,
+        "value": -9.5,
         "description": "initial offset of servo 3"
     },
 }
@@ -74,6 +74,10 @@ commands = {
     },
     "sequence": {
         "description": "run sequence",
+        "function": None
+    },
+    "reset": {
+        "description": "run reset",
         "function": None
     }
 }
@@ -160,6 +164,7 @@ class CommandPanel(QFrame):
         commands["kill"]["function"] = self.kill
         commands["set"]["function"] = self.set
         commands["sequence"]["function"] = self.sequence
+        commands["reset"]["function"] = self.reset
 
         self.load()
 
@@ -198,6 +203,10 @@ class CommandPanel(QFrame):
     @asyncSlot()
     async def kill(self):
         await blue.write(COMMAND_CHARACTERISTIC_UUID, "kill")
+
+    @asyncSlot()
+    async def reset(self):
+        await blue.write(COMMAND_CHARACTERISTIC_UUID, "reset")
 
     @asyncSlot()
     async def sequence(self):

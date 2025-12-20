@@ -21,6 +21,7 @@ void loop() {
         delay(100);
         return;
     }
+
     
     if (control->cmd =="arm") {
         control->arm();
