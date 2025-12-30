@@ -1,0 +1,24 @@
+### Footprint positions - created on 2025-04-27T01:16:56+0900 ###
+### Printed by KiCad version 9.0.0
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref          Val                Package                                     PosX       PosY       Rot  Side
+C1             470uF              CAP_YX_8X11P5_RUB                       238.0000   -98.0832   90.0000  top
+C2             470uF              CAP_YX_8X11P5_RUB                       237.8500   -77.0832   90.0000  top
+C3             470uF              CAP_YX_8X11P5_RUB                       238.0000   -87.5832   90.0000  top
+C4             470uF              CAP_YX_8X11P5_RUB                       238.0000   -66.5832   90.0000  top
+C6             22uF               CAP_PAN_5X11_PAN                        231.5000  -112.5000   90.0000  top
+C7             220uF              CAP_PAN_6.3X11.2_PAN                    236.0000  -104.5000  -90.0000  top
+ESP32-DEVKIT1  ~                  ESP32_DEVKIT_V1                         217.4250   -81.6700    0.0000  top
+J1             B2B-XH-A           JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical   208.0000  -112.0000    0.0000  top
+J2             servo4             PinHeader_1x03_P2.54mm_Vertical         246.0000   -93.1700    0.0000  top
+J3             servo3             PinHeader_1x03_P2.54mm_Vertical         246.0000   -83.1700    0.0000  top
+J4             servo2             PinHeader_1x03_P2.54mm_Vertical         246.0000   -73.1700    0.0000  top
+J5             servo1             PinHeader_1x03_P2.54mm_Vertical         246.0000   -63.1700    0.0000  top
+J6             EDF                PinHeader_1x02_P2.54mm_Vertical         239.0000   -57.5000  -90.0000  top
+J7             Conn_01x05_Socket  PinHeader_1x05_P2.54mm_Vertical         197.0000   -68.0800  180.0000  top
+J8             Conn_01x05_Socket  PinHeader_1x05_P2.54mm_Vertical         197.0000   -83.5000  180.0000  top
+MPU9250        ~                  MPU9250                                 194.0000  -101.6950   90.0000  top
+SW1            SW_SPST            SW_DS01-254-L-01BE                      220.5000  -112.0000  -90.0000  top
+U1             AMS1117-5.0        SOT-223-3_TabPin2                       244.0000  -105.0000   90.0000  top
+## End

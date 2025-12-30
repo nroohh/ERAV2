@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ERA")(type "KiCad")(uri "${KIPRJMOD}/ERA.pretty")(options "")(descr ""))
+  (lib (name "digikey-footprints")(type "KiCad")(uri "/Users/nroohh/Documents/digikey-kicad-library-master/digikey-footprints.pretty")(options "")(descr ""))
+)

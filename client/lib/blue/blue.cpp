@@ -36,9 +36,8 @@ class BLECommandCallbacks : public BLECharacteristicCallbacks {
     pChar->setValue(value);
     pChar->notify();
     Serial.println("recieved: " + String(value.c_str()));
-
-    control->cmd = value.c_str();
-    control->funcMap[control->cmd]();
+    
+    control->funcMap[value.c_str()]();
   }
 };
 

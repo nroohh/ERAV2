@@ -34,7 +34,7 @@ double wrap(double reference, double c) {
 
 void HNU::update() {
     
-    distance = vl.distance(); // distance in millimeters
+    distance = vl.distance() / 1000.0; // distance in meters
     mpu.accelUpdate();
     mpu.gyroUpdate();
     mpu.magUpdate();

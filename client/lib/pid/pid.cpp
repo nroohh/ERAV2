@@ -32,8 +32,9 @@ void Axis::pid(float value, float dt) {
     if (!is_saturating) {
         i += di;
     }
-    
+
     float iv = ig * i;
+    constrain(iv, -0.5, 0.5); // prevent integral windup of 0.5
 
     output = pv + iv + dv;
 

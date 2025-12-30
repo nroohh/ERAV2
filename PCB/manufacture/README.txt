@@ -1,0 +1,1 @@
+The labels: MPU9250 and ESP32 DEVKIT-1 are just placeholder texts for custom footprints, and does not have to be bought! In the designated sections of ESP32 DEVKIT-1, solder two 01x15 female 2.54mm pin headers. For MPU9250, solder one 01x10 female 2.54mm pin header. Thanks!

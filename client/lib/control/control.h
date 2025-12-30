@@ -57,8 +57,10 @@ public:
 
         funcMap["arm"] = [this]() { this->arm(); };
         funcMap["reset"] = [this]() { this->reset(); };
-        funcMap["launch"] = [this]() { this->launch(); };
+        funcMap["launch"] = [this]() { this->prelaunch(); };
         funcMap["kill"] = [this]() { this->kill(); };
+        funcMap["pause"] = [this]() { this->pause(); };
+
 
         rotationX = Axis(0, 0, 0, 0, 0); // current, p gain, i gain, d gain, target
         rotationY = Axis(0, 0, 0, 0, 0);
@@ -68,6 +70,8 @@ public:
     }
 
     void arm();
+    void pause();
+    void prelaunch();
     void launch();
     void kill();
     void reset();

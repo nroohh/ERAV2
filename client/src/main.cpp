@@ -23,14 +23,8 @@ void loop() {
     }
 
     
-    if (control->cmd =="arm") {
-        control->arm();
-        control->cmd = "";
-    } else if (control->cmd == "launch") {
+    if (control->cmd == "launch") {
         control->launch();
-    } else if (control->cmd == "kill") {
-        control->kill();
-        control->cmd = "";
     } else {
         delay(100);
     }
